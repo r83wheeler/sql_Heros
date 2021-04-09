@@ -14,13 +14,13 @@ if ($conn->connect_error) {
 
 $route = $_GET['route'];
 
-function createBattle ($conn, $h1, $h2, $w){
+function createHero ($conn){
   
-  $sql = "INSERT INTO battles (hero1, hero2, winner)
-  VALUES ($h1, $h2, $w)";
+  $sql = "INSERT INTO heroes (id, name, about_me, biography, image_url)
+  VALUES ('7','Dart Man','Is hella fast', 'Was born fast, will die fast', 'Null')";
 
   if ($conn->query($sql) === TRUE) {
-    $record = "{'success':'created new battle'}"; // needs the data from the created record
+    $record = "{'success':'created new hero'}"; // needs the data from the created record
   } else {
     echo "{'error': '" . $sql . " - " . $conn->error . "'}";
   }
@@ -62,19 +62,34 @@ function getHeroByID ($conn, $heroID){
   return json_encode($data);
 }
 
-// this function updates an ability.  It takes two parameters: the connection and the hero's id to update the ability in the database
-function updateAbility ($conn, $heroID, $newAbilityID) {
-  
-  // query as a string
-  $sql="UPDATE ability_hero SET ability_id = '" . $newAbilityID . "' WHERE hero_id='" . $heroID . "'" ; // this is a string
-    $result = $conn->query($sql);
+function deleteHero ($conn){
+  $sql = "DELETE FROM heroes WHERE id=7";
 
-  return json_encode($result);
+if ($conn->query($sql) === TRUE) {
+  echo "Record deleted successfully";
+} else {
+  echo "Error deleting record: " . $conn->error;
+}
+}
+
+
+
+// this function updates an ability.  It takes two parameters: the connection and the hero's id to update the ability in the database
+function updateAbility ($conn) {
+  $sql = "UPDATE ability_hero SET ability_id='8' WHERE hero_id=2";
+
+if (mysqli_query($conn, $sql)) {
+  echo "Record updated successfully";
+} else {
+  echo "Error updating record: " . mysqli_error($conn);
+}
+ 
 }
 
 function updateHeroBio ($conn, $biography, $newHeroBioId) {
   
-  $sql="UPDATE heroes SET biography = '" . $newHeroBioID . "' WHERE biography='" . $biography . "'" ;
+  $sql = "INSERT INTO heroes  = (biography)
+  VALUES ('Able to see 5 seconds into the future')";
     $result = $conn->query($sql);
   
   return json_encode($result);
@@ -84,8 +99,8 @@ switch ($route) {
   case "getAllHeroes":
     $myData = getAllHeroes($conn);
     break;
-  case "createBattle":
-    $myData = createBattle($conn, 2, 4, 4);
+  case "createHero":
+    $myData = createHero($conn);
     break;
   case "getHeroByID":
     //
@@ -94,11 +109,16 @@ switch ($route) {
     break;
     
   case "updateAbility":
-    $heroID = $_GET["hero_id"];    
-    $abilityID = $_GET["ability_hero"];
-    $myData = updateAbility($conn, $heroID, $abilityID);
+    $myData = updateAbility($conn);
     break;
     
+  case "updateHero":
+    $myData = updateHero($conn);
+    break;
+    
+    case "deleteHero":
+    $myData = deleteHero($conn);
+    break;
   default:
    $myData = json_encode([]);
 }
